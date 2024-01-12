@@ -1,0 +1,173 @@
+#Veritabanı içerisine Hasta Tablosu oluşturma
+create database test
+use test
+create table Hasta(
+HastaId int identity(1,1) not null Primary Key,
+Soyad nvarchar(30) not null,
+Ad nvarchar(30), 
+Cinsiyet nvarchar(1),
+Boy float not null,
+Kilo float not null
+)
+
+#Tablo içerisine veri eklemek
+INSERT INTO Hasta(Soyad,Ad,Cinsiyet,Boy,Kilo)
+VALUES 
+('Smith','Deniz','F',158,47),
+('Agarwal','Arjun','M',192,89),
+('Adams','Poppy','F', 185,92),
+('Johnson','Tierra','F',167,59)
+
+
+#Tablodaki tüm verileri çekme
+SELECT Ad,Soyad,Cinsiyet FROM Hasta
+#Cinsiyeti kadın olan kayıtları görüntüleme
+SELECT Ad,Soyad,Cinsiyet FROM Hasta WHERE Cinsiyet='F'
+#Boyu 160tan ve kilosu 75’ten büyük olan kişileri görüntüleme
+SELECT Ad,Soyad,Cinsiyet FROM Hasta WHERE Boy>160.0 AND Kilo>75.0
+#Kayıt silme
+delete from Hasta where HastaId=15224
+#Kayıt güncelleme
+UPDATE Hasta SET Kilo=50 WHERE Kilo<50.0
+
+#27.03.2023 Ders Notları ----------------------------------------------
+CREATE DATABASE Okul
+USE Okul
+CREATE TABLE Ogrenci(
+OgrNo int identity(101,1) Primary Key,
+Ad nvarchar(30) not null,
+Soyad nvarchar(30) not null
+)
+
+
+#Foreign Key içeren tablonun tanımlanması----------------------------------------------------------
+USE Okul
+CREATE TABLE Not_(
+NotId int Identity(1,1) Primary Key,
+Ogr_No int Foreign Key References Ogrenci(OgrNo),
+DersKodu nvarchar(8) not null,
+Vize float not null,
+Final float not null,
+)
+
+
+#Tabloya Veri Ekleme------------------------------------------------------
+Use Okul
+INSERT INTO Not_(Ogr_No,DersKodu,Vize,Final) 
+VALUES
+(105, 'MM1', 92,88),
+(101,'MM3',82,89),
+(103,'DH5',54,65),
+(104,'DH5',85,74),
+(102,'DH6',69,58),
+(106,'DH6',25,48),
+(107,'B1',78,86),
+(107,'B4',48,59),
+(108,'I2',96,100),
+(109,'I2',35,48),
+(108,'I1',45,50),
+(105,'MM3',85,70),
+(110,'B4',25,36),
+(110,'B1',14,24)
+
+
+#Vize notu 50 üzeri olan öğrencilerinin ad, soyad bilgilerini görüntüleme
+SELECT Ad, Soyad, Vize FROM Ogrenci INNER JOIN Not_ 
+ON Ogrenci.OgrNo=Not_.Ogr_No WHERE Not_.Vize>50.0
+
+#I2 Ders kodlu dersi alan öğrencilerin ad,soyad bilgilerini görüntüleme
+SELECT Ad,Soyad FROM Ogrenci INNER JOIN Not_ 
+ON Ogrenci.OgrNo=Not_.Ogr_No WHERE Not_.DersKodu='I2'
+
+CREATE DATABASE Hastane
+
+use Hastane
+create table Hasta(
+HastaId int identity(15223,1) Primary Key,
+Soyad nvarchar(20) not null,
+Ad nvarchar(20) not null,
+Cinsiyet nvarchar(6),
+Boy float not null,
+Kilo float not null
+)
+
+insert into Hasta(Soyad,Ad,Cinsiyet,Boy,Kilo) 
+values('Urcan','Talha','M',177,55.0)
+
+select * from Hasta 
+
+delete from Hasta where HastaId=15225
+
+insert into Hasta(Soyad,Ad, Cinsiyet,Boy,Kilo) values
+('Ateş','Emircan','M',177,60),
+('Aydoğan','Ata Yavuz','M',184,83),
+('Yaman','Ceren','F',163,55),
+('Çetin','Hilal Nur','F',169,58)
+
+update Hasta set Kilo=80 where HastaId=15227
+
+select Ad,Soyad from Hasta where Kilo<=60 and Boy<170
+
+select Ad,Soyad from Hasta where Kilo<=60 or Boy>180
+
+select Ad,Soyad from Hasta where Kilo<=60 and Boy>180
+
+
+-------------------------------------------------------------------
+
+create database OKUL
+
+use OKUL
+create table Ogrenci(
+OgrNo int identity(101,1) primary key,
+Ad nvarchar(50) not null,
+Soyad nvarchar(50) not null
+)
+
+use OKUL
+create table Not_(
+NotId int identity(1,1) primary key,
+DersKodu nvarchar(10) not null,
+Vize int,
+Final int,
+Ogr_No int not null foreign key references Ogrenci(OgrNo)
+)
+
+use OKUL
+insert into Ogrenci(Ad,Soyad) values
+('Talha','Urcan'),
+('Muhammed', 'Kılıç'),
+('Ceren','Yaman'),
+('Nisa Nur','Balcı')
+
+use OKUL
+insert into Not_(DersKodu,Vize,Final,Ogr_No) values
+('MM3',82,89,101),
+('DH5',54,65,103),
+('DH3',80,12,104)
+
+SELECT Ad,Soyad,Vize,Final from Ogrenci inner join Not_ on 
+Ogrenci.OgrNo=Not_.Ogr_No where Vize>50 AND Final>80
+
+USE OKUL
+create table Bolum(
+BolumKodu int identity(1,1) primary key,
+BolumAdi nvarchar(20) not null
+)
+
+
+USE OKUL
+create table Ders(
+DersKodu nvarchar(20) primary key,
+DersAdi nvarchar(20) not null,
+Bolum_Kodu int not null foreign key references Bolum(BolumKodu)
+)
+
+USE OKUL
+create table Not_(
+NotId int identity(1,1) primary key,
+Vize int not null, 
+Final int not null,
+Ogr_No int not null foreign key references Ogrenci(OgrNo),
+Ders_Kodu nvarchar(20) not null foreign key references Ders(DersKodu)
+)
